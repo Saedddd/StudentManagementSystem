@@ -1,53 +1,61 @@
 package com.example.springfirstlab.service.impl;
 
+import com.example.springfirstlab.dto.StudentDTO;
+import com.example.springfirstlab.dto.CreateStudentDTO;
 import com.example.springfirstlab.model.Student;
-
 import com.example.springfirstlab.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Slf4j // Логирование
+@Slf4j
 public class StudentService {
 
     private final StudentRepository studentRepository;
 
-    public List<Student> findAllStudents() {
+    public List<StudentDTO> findAllStudents() {
         log.info("Fetching all students...");
-        return studentRepository.findAll();
+        return studentRepository.findAll().stream()
+                .map(StudentDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public Student createStudent(Student student) {
-        if (student.getId() != null) {
-            throw new IllegalArgumentException("ID must be null when creating a new student");
-        }
-        log.info("Creating student: {}", student);
-        return studentRepository.save(student);
+    public StudentDTO createStudent(CreateStudentDTO studentDTO) {
+        Student student = new Student();
+        student.setFirstName(studentDTO.getFirstName());
+        student.setLastName(studentDTO.getLastName());
+        student.setDob(studentDTO.getDob());
+        student.setEmail(studentDTO.getEmail());
+
+        student = studentRepository.save(student);
+        return new StudentDTO(student);
     }
 
-    public Student updateStudent(Student student) {
-        if (student.getId() == null) {
-            throw new IllegalArgumentException("ID cannot be null for update");
-        }
+    public StudentDTO updateStudent(Long id, CreateStudentDTO studentDTO) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Student with ID " + id + " not found"));
 
-        if (!studentRepository.existsById(student.getId())) {
-            throw new IllegalArgumentException("Student with ID " + student.getId() + " not found");
-        }
+        student.setFirstName(studentDTO.getFirstName());
+        student.setLastName(studentDTO.getLastName());
+        student.setDob(studentDTO.getDob());
+        student.setEmail(studentDTO.getEmail());
 
-        log.info("Updating student: {}", student);
-        return studentRepository.save(student);
+        student = studentRepository.save(student);
+        return new StudentDTO(student);
     }
 
-    public Student readStudent(Long id) {
-        return studentRepository.findById(id)
+    public StudentDTO readStudent(Long id) {
+        Student student = studentRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Student with ID {} not found", id);
                     return new IllegalArgumentException("Student with ID " + id + " not found");
                 });
+        return new StudentDTO(student);
     }
 
     public void deleteStudent(Long id) {
@@ -58,6 +66,3 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 }
-
-
-

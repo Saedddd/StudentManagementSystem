@@ -15,7 +15,6 @@
     <input type="text" id="lastName" placeholder="Last Name" required>
     <input type="date" id="dob" required>
     <input type="email" id="email" placeholder="Email" required>
-    <input type="text" id="enroll" placeholder="Enrollment" required>
     <button type="submit">Add Student</button>
 </form>
 <ul id="student-list"></ul>
@@ -28,6 +27,110 @@
 </form>
 <ul id="course-list"></ul>
 
-<script src="script.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const studentForm = document.getElementById("student-form");
+        const studentList = document.getElementById("student-list");
+
+        const courseForm = document.getElementById("course-form");
+        const courseList = document.getElementById("course-list");
+
+
+
+
+        // Fetch and display courses
+        function loadCourses() {
+            fetch("/api/v1/courses")
+                .then(response => response.json())
+                .then(data => {
+                    courseList.innerHTML = "";
+                    data.forEach(course => {
+                        const li = document.createElement("li");
+                        li.textContent = `${course.name} - ${course.description}`;
+                        courseList.appendChild(li);
+                    });
+                });
+        }
+
+
+
+        courseForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const course = {
+                name: document.getElementById("courseName").value,
+                description: document.getElementById("courseDescription").value
+            };
+
+            fetch("/api/v1/courses", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(course)
+            }).then(() => {
+                courseForm.reset();
+                loadCourses();
+            });
+        });
+
+        loadCourses();
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const studentForm = document.getElementById("student-form");
+            const studentList = document.getElementById("student-list");
+
+            // Функция загрузки списка студентов
+            function loadStudents() {
+                fetch("/api/v1/students")
+                    .then(response => response.json())
+                    .then(data => {
+                        studentList.innerHTML = "";
+                        data.forEach(student => {
+                            const li = document.createElement("li");
+                            li.textContent = `${student.firstName} ${student.lastName} - ${student.email}`;
+                            studentList.appendChild(li);
+                        });
+                    })
+                    .catch(error => console.error("Error loading students:", error));
+            }
+
+            // Обработчик отправки формы
+            studentForm.addEventListener("submit", function (event) {
+                event.preventDefault(); // Отменяем стандартную отправку формы
+
+                // Получаем данные из формы
+                const studentData = {
+                    firstName: document.getElementById("firstName").value,
+                    lastName: document.getElementById("lastName").value,
+                    dob: document.getElementById("dob").value,
+                    email: document.getElementById("email").value
+                };
+
+                // Отправляем данные на сервер
+                fetch("/api/v1/students", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(studentData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Failed to add student");
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        studentForm.reset(); // Очищаем форму
+                        loadStudents(); // Обновляем список студентов
+                    })
+                    .catch(error => console.error("Error adding student:", error));
+            });
+
+            // Загружаем студентов при загрузке страницы
+            loadStudents();
+        });
+
+
+    });
+</script>
 </body>
 </html>

@@ -1,44 +1,44 @@
 package com.example.springfirstlab.controller;
 
-
-import com.example.springfirstlab.model.Student;
-
+import com.example.springfirstlab.dto.StudentDTO;
+import com.example.springfirstlab.dto.CreateStudentDTO;
 import com.example.springfirstlab.service.impl.StudentService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController //автоматически сериализует объекты в JSON/XML.
-@RequestMapping("/api/v1/students")//маппинг запросов на метод (GET, POST и т. д.)
+@RestController
+@RequestMapping("/api/v1/students")
 @AllArgsConstructor
 public class StudentsController {
 
     private final StudentService service;
 
-
     @GetMapping
-    public List<Student> findAllStudent() {
+    public List<StudentDTO> findAllStudent() {
         return service.findAllStudents();
     }
 
     @PostMapping
-    public Student createStudent(@RequestBody Student student) {
-        return service.createStudent(student);
+    public ResponseEntity<StudentDTO> createStudent(@RequestBody CreateStudentDTO studentDTO) {
+        return ResponseEntity.ok(service.createStudent(studentDTO));
     }
 
     @GetMapping("/{id}")
-    public Student readStudent(@PathVariable Long id) {
-        return service.readStudent(id);
+    public ResponseEntity<StudentDTO> readStudent(@PathVariable Long id) {
+        return ResponseEntity.ok(service.readStudent(id));
     }
 
-    @PutMapping
-    public Student updateStudent(@RequestBody Student student){
-        return service.updateStudent(student);
+    @PutMapping("/{id}")
+    public ResponseEntity<StudentDTO> updateStudent(@PathVariable Long id, @RequestBody CreateStudentDTO studentDTO) {
+        return ResponseEntity.ok(service.updateStudent(id, studentDTO));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable Long id){
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         service.deleteStudent(id);
+        return ResponseEntity.noContent().build();
     }
 }
