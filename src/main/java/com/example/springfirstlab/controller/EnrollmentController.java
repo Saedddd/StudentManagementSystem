@@ -2,6 +2,7 @@ package com.example.springfirstlab.controller;
 
 import com.example.springfirstlab.dto.EnrollmentDTO;
 import com.example.springfirstlab.dto.CreateEnrollmentDTO;
+import com.example.springfirstlab.dto.UpdateEnrollmentDTO;
 import com.example.springfirstlab.service.impl.EnrollmentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class EnrollmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EnrollmentDTO> updateEnrollment(@PathVariable Long id, @RequestBody CreateEnrollmentDTO dto) {
+    public ResponseEntity<EnrollmentDTO> updateEnrollment(@PathVariable Long id, @RequestBody UpdateEnrollmentDTO dto) {
         return ResponseEntity.ok(enrollmentService.updateEnrollment(id, dto));
     }
 

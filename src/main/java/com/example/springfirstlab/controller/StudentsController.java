@@ -16,7 +16,7 @@ public class StudentsController {
 
     private final StudentService service;
 
-    @GetMapping
+    @GetMapping("/all")
     public List<StudentDTO> findAllStudent() {
         return service.findAllStudents();
     }

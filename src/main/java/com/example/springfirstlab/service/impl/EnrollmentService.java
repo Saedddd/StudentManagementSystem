@@ -2,6 +2,7 @@ package com.example.springfirstlab.service.impl;
 
 import com.example.springfirstlab.dto.EnrollmentDTO;
 import com.example.springfirstlab.dto.CreateEnrollmentDTO;
+import com.example.springfirstlab.dto.UpdateEnrollmentDTO;
 import com.example.springfirstlab.model.Enrollment;
 import com.example.springfirstlab.model.Student;
 import com.example.springfirstlab.model.Course;
@@ -48,22 +49,30 @@ public class EnrollmentService {
         return new EnrollmentDTO(enrollment);
     }
 
-    public EnrollmentDTO updateEnrollment(Long id, CreateEnrollmentDTO dto) {
+    public EnrollmentDTO updateEnrollment(Long id, UpdateEnrollmentDTO dto) {
         Enrollment enrollment = enrollmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found"));
 
-        Student student = studentRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-        Course course = courseRepository.findById(dto.getCourseId())
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+        if (dto.getStudentId() != null) {
+            Student student = studentRepository.findById(dto.getStudentId())
+                    .orElseThrow(() -> new RuntimeException("Student not found"));
+            enrollment.setStudent(student);
+        }
 
-        enrollment.setStudent(student);
-        enrollment.setCourse(course);
-        enrollment.setEnrollmentDate(dto.getEnrollmentDate());
+        if (dto.getCourseId() != null) {
+            Course course = courseRepository.findById(dto.getCourseId())
+                    .orElseThrow(() -> new RuntimeException("Course not found"));
+            enrollment.setCourse(course);
+        }
+
+        if (dto.getEnrollmentDate() != null) {
+            enrollment.setEnrollmentDate(dto.getEnrollmentDate());
+        }
 
         enrollment = enrollmentRepository.save(enrollment);
         return new EnrollmentDTO(enrollment);
     }
+
 
     public void deleteEnrollment(Long id) {
         enrollmentRepository.deleteById(id);
