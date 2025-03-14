@@ -16,7 +16,7 @@ import java.util.List;
 public class EnrollmentController {
     private final EnrollmentService enrollmentService;
 
-    @GetMapping
+    @GetMapping("/all")
     public List<EnrollmentDTO> getAllEnrollments() {
         return enrollmentService.getAllEnrollments();
     }

@@ -9,4 +9,5 @@ public class CreateStudentDTO {
     private String lastName;
     private LocalDate dob;
     private String email;
+    private String password;
 }

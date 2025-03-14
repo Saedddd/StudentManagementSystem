@@ -7,6 +7,11 @@ import com.example.springfirstlab.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+// Внедряем PasswordEncoder
+
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Slf4j
 public class StudentService {
-
+    private final PasswordEncoder passwordEncoder;
     private final StudentRepository studentRepository;
 
     public List<StudentDTO> findAllStudents() {
@@ -31,6 +36,8 @@ public class StudentService {
         student.setLastName(studentDTO.getLastName());
         student.setDob(studentDTO.getDob());
         student.setEmail(studentDTO.getEmail());
+        student.setPassword(passwordEncoder.encode(studentDTO.getPassword())); // ХЕШИРУЕМ ПАРОЛЬ
+
 
         student = studentRepository.save(student);
         return new StudentDTO(student);

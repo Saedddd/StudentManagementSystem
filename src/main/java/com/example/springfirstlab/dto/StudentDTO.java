@@ -7,18 +7,21 @@ import java.time.LocalDate;
 
 @Data
 public class StudentDTO {
-    private Long id;
     private String firstName;
     private String lastName;
     private LocalDate dob;
     private String email;
+    private String password;
+
+
 
     public StudentDTO(Student student) {
-        this.id = student.getId();
         this.firstName = student.getFirstName();
         this.lastName = student.getLastName();
         this.dob = student.getDob();
         this.email = student.getEmail();
+        this.password = student.getPassword();
+
     }
 }
 
